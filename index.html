@@ -1,0 +1,210 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <link href="https://vjs.zencdn.net/7.1.0/video-js.css" rel="stylesheet">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <!-- If you'd like to support IE8 (for Video.js versions prior to v7) -->
+  <script src="https://vjs.zencdn.net/ie8/ie8-version/videojs-ie8.min.js"></script>
+</head>
+
+<body>
+<div>
+<video
+  class="video-js"
+  style="display: none"
+  id="mediaspace_wrapper"
+  controls
+  preload="auto"
+  width="640"
+  height="264"
+  data-setup='{}'>
+  <!-- <source id="videoSrc" src="v.mp4" type="video/mp4"> -->
+  <source id="videoSrc" src="" type="video/mp4">
+  <!-- <source src="//vjs.zencdn.net/v/oceans.webm" type="video/webm"> -->
+
+  <track id="sutitleSrcSRT" kind="captions" src="" srclang="en" label="English VTT" default>
+  <!-- <track id="sutitleSrcSRT" kind="captions" src="v.vtt" srclang="en" label="English SRT" default> -->
+  <!-- <track id="sutitleSrcVTT" kind="captions" src="v.vtt" srclang="en" label="English VTT" default> -->
+</video>
+<div class="container" id="container">
+</br>
+<h1>Space player</h1>
+</br>
+
+
+<div>
+
+
+<div class="input-group mb-3">
+  <div class="custom-file">
+<input class="custom-file-input" id="inputGroupFile1" type="file" id="file" onchange="onFileChange(this)" /></br>
+    <label class="custom-file-label" for="inputGroupFile1">Choose video file</label>
+  </div>
+  <div class="input-group-append">
+    <span class="input-group-text" id="">Upload</span>
+  </div>
+</div>
+
+
+<div class="input-group input-group-sm ">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="inputGroup-sizing-sm">Video link</span>
+  </div>
+  <input class="form-control" id="videoInput" aria-label="Small"  type="input" id="input" class="videoInput" onchange="onFileChange(this)" /></br>
+</div>
+  </br>
+
+</div>
+<div>
+
+<div class="input-group mb-3">
+  <div class="custom-file">
+<input class="custom-file-input" id="inputGroupFile02" type="file" id="file" onchange="onSrtChange(this)" /></br>
+    <label class="custom-file-label" for="inputGroupFile02">Choose subtitles file</label>
+  </div>
+  <div class="input-group-append">
+    <span class="input-group-text" id="">Upload</span>
+  </div>
+</div>
+
+<div class="input-group input-group-sm mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="inputGroup-sizing-sm">Subtitles link</span>
+  </div>
+<input type="input" id="srtInput" class="form-control" style="width: auto" onchange="onSrtChange(this)" /></br>
+</div>
+
+</div>
+
+
+<div id="select-cont" class="input-group mb-3">
+  <div class="input-group-prepend">
+    <label class="input-group-text" for="inputGroupSelect01">Catalogue</label>
+  </div>
+</div>  
+ 
+<input type="button" class="btn btn-primary"   id="init" value="PLAY MOVIE" onclick="addVideoJs()" />
+
+</div>
+</div>
+<div class="container">
+<div class="checkbox">
+  <label style="color:white" ><input type="checkbox" id="speak" value="">Pronounce words</label>
+</div>
+
+
+  <select id="volume" class="custom-select">
+<option value="0.1">10 %</option>
+<option value="0.2">20 %</option>
+<option value="0.3">30 %</option>
+<option value="0.4">40 %</option>
+<option selected="selected" value="0.5">50 %</option>
+<option value="0.6">60 %</option>
+<option value="0.7">70 %</option>
+<option value="0.8">80 %</option>
+<option value="0.9">90 %</option>
+<option value="100">100 %</option>
+</select>
+
+
+</div>
+  <!-- <script src="https://vjs.zencdn.net/7.1.0/video.js"></script> -->
+<!-- <script src="video.js"></script> -->
+<style>
+h1 {
+	color: white;
+	margin: auto;
+	text-align: center;
+	width: 100%;
+}
+
+
+body {
+background-image: url("space.png");
+}
+
+.btn-primary {
+width: 100% !important;
+}
+.input-block-level {
+  display: block;
+  width: 101% !important;
+  min-height: 28px;        // Make inputs at least the height of their button counterpart
+  .box-sizing(border-box); // Makes inputs behave like true block-level elements
+}
+</style>
+<script src="texttospeech.js"></script> 
+<!-- <script src="watch_history.js"></script>  -->
+<script src="offline-catalogue.js"></script> 
+<script charset="utf-8" type="text/javascript" src="captions.js"></script>
+<script>
+	this.onFileChange = function (e) {
+		if(!e.value){
+			console.log("ERROR")
+			return
+		}
+		<!-- var file = document.getElementById('file').value.replace(/^.*[\\\/]/, ''); -->
+		if(e.id == "file" ){
+			var file = e.value.replace(/^.*[\\\/]/, '');
+			var vtt = file.substr(0, file.lastIndexOf(".")) + ".vtt";
+			$(".srtInput")[0].value = vtt;
+			document.getElementById("sutitleSrcSRT").src = vtt;
+			console.log("file")
+			console.log("vtt")
+		} else{
+			var file = e.value
+			console.log("input")
+		}
+		
+		console.log(file)
+		<!-- var srt = file.substr(0, file.lastIndexOf(".")) + ".srt"; -->
+		<!-- var vtt = file.substr(0, file.lastIndexOf(".")) + ".vtt"; -->
+		document.getElementById("videoSrc").src = file;
+		<!-- document.getElementById("mediaspace_wrapper_html5_api").src = file; -->
+	};
+		this.onSrtChange = function (e) {
+		if(!e.value){
+			console.log("ERROR")
+			return
+		}
+		<!-- var file = document.getElementById('file').value.replace(/^.*[\\\/]/, ''); -->
+		if(e.id == "file" ){
+			var file = e.value.replace(/^.*[\\\/]/, '');
+			console.log("file")
+		} else{
+			var file = e.value
+			console.log("input")
+		}
+
+		document.getElementById("sutitleSrcSRT").src = file;
+		<!-- document.getElementById("mediaspace_wrapper_html5_api").src = file; -->
+	};
+	function addVideoJs() {
+		$("#container").hide()
+		var script = document.createElement('script');
+		script.src = 'video.js';
+		script.type = 'text/javascript';
+		document.getElementsByTagName('head')[0].appendChild(script);
+		console.log("addVideoJs  script was appended");	
+		
+		var videoLink = document.getElementById("videoInput").value
+		var subLink = document.getElementById("srtInput").value
+		//addWatchHistory(videoLink,subLink)
+		$(".video-js").show()
+	}
+	
+</script>
+<style>
+  body,div {
+	padding:0;
+	margin:0;
+  }
+  .video-js {
+	width:100%;
+	height:100vh;
+  }
+</style>
+</body>
+</html>
+
