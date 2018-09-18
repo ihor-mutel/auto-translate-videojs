@@ -45,7 +45,7 @@ if (hrefCheck("youtube.com")) {
     iSubtitlesElementNamejQuery = "." + iSubtitlesElementName;
     iDelayerOn = true;
 	blockToggleBack = true;
-    iDelayerTime = 5;
+    iDelayerTime = 8;
 	console.log("INIT IGOR")
     init();
 } else if (hrefCheck("oload.download") || hrefCheck("openload.co") || hrefCheck("192.168.1.102/player") || hrefCheck("streamango.com")) {
@@ -387,7 +387,16 @@ function delayPause(seconds, translationsFound) {
             $(iTogglePlayButtonName)[0].click();
 			
 			 if(document.getElementById("speak").checked && speakArray) {
-				speak(speakArray.join(","));
+				//speak(speakArray.join(","));
+				//speakFromUrl(speakArray.join(","));
+				
+				if(iDictionaryId == 401005908){
+					speakFromUrl(speakArray.join(","));
+				}else{
+					synSpeak(speakArray[0])
+					remoteDictionaryTransaction(speakArray,"history")
+				}
+				
 			 }
 			
             setTimeout(function() {
@@ -397,6 +406,45 @@ function delayPause(seconds, translationsFound) {
             }, seconds * 1000);
         }
     }
+}
+
+ function synSpeak(text){
+	var settings = {
+	  "async": true,
+	  "crossDomain": true,
+	  "url": "https://ss.lt-center.info/test/synonyms/" + text,
+	  "method": "GET",
+	  "headers": {
+		"cache-control": "no-cache",
+		"postman-token": "80c5bd5a-4f41-8b1d-0a0f-238465c25e70"
+	  }
+	}
+
+	$.ajax(settings).done(function (response) {
+	  speakFromUrl(response);
+	});
+	
+}
+
+
+function speakFromUrl(request){
+	$.getJSON("https://cors.io/?https://api.lingualeo.com/gettranslates?word=" + request, function(data) {
+		console.log(data)
+		var audio = new Audio(data.sound_url)
+		var volume = $("#volume option:selected").val()
+		
+		audio.volume = volume;
+		audio.playbackRate = 0.9
+		
+		audio.play()
+		audio.onended = function() {
+			    if (checkState()) {
+                    $(iTogglePlayButtonName)[0].click();
+                }
+		};
+		
+		//addIntoDictionary(data, currentText.trim());
+	});
 }
 
 
@@ -750,6 +798,17 @@ function delayPauseTroggle() {
 				showSubtitles(sentence, false);
             }
         }
+        if (e.which == 37) {
+			console.log(e.which)
+			var player = videojs("mediaspace_wrapper")
+			player.currentTime(player.currentTime() - 5)			
+		}
+        if (e.which == 39) {
+			console.log(e.which)		
+			var player = videojs("mediaspace_wrapper")
+			player.currentTime(player.currentTime() + 5)			
+		}
+		
     });
 }
 
@@ -815,3 +874,4 @@ function init() {
     delayPauseTroggle();
 	addCuttingsModeListener();
 }
+
