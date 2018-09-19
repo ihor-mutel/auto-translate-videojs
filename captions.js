@@ -655,9 +655,9 @@ function checkDictionary(sentence, firstCall) {
             translationsFound = true;
             // var translation = entry.translation;
             var translation = cleanTranslations(entry).toString();
-            var translationMessage = "\n" + currentWord.toUpperCase() + ": " + translation.toString().toLowerCase();
+            var translationMessage = "\n" + entry.word.toUpperCase() + ": " + translation.toString().toLowerCase();
             if (!sentence.includes(translationMessage)) {
-				speakArray.push(currentWord)
+				speakArray.push(entry.word)
                 // console.log(sentence)
                 // console.log("Replace with: " + translation)
 				
