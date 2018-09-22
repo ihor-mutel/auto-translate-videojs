@@ -421,8 +421,7 @@ function delayPause(seconds, translationsFound) {
 	}
 
 	$.ajax(settings).done(function (response) {
-	console.log("syn speak: " + response)	  
-speakFromUrl(response);
+	  speakFromUrl(response);
 	});
 	
 }
@@ -437,7 +436,7 @@ function speakFromUrl(request){
 		
 		audio.volume = volume;
 		audio.playbackRate = 0.9
-		console.log("speak from URL" + request)
+		
 		audio.play()
 		audio.onended = function() {
 			    if (checkState()) {
