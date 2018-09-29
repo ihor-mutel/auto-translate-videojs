@@ -123,6 +123,7 @@ function addThreeChecker() {
         if (tempSubs.trim() != iCurrentSubsBoolean && tempSubs.trim() !== "") {
             iCurrentSubs = tempSubs;
             //console.log(iCurrentSubs);
+			subtitlesHistory.addCue(tempSubs)
             checkDictionary(iCurrentSubs, true);
         }
 
@@ -140,6 +141,44 @@ function checkLocalDictionary() {
     }
 
 }
+
+var subtitlesHistory = {
+    cues: [],
+    getCues: function() {
+        return this.cues
+    },
+	getCuesNL: function() {
+        return this.cues.join("\n\n")
+    },
+    addCue: function(cue) {
+		
+		if(!this.checkIfInCues(cue)){
+	
+			if (this.cues.length > 1) {
+				var cuesLength = this.cues.length
+				this.cues.splice(0, cuesLength - 1)
+				this.cues.push(cue)
+			} else {
+				this.cues.push(cue)
+			}
+		}
+        console.log(this.cues)
+    },
+    checkIfInCues: function(cue) {
+        for (var i = 0; i < this.cues.length; i++) {
+            var checkBoolean = this.cues[i].includes(cue)
+            if (checkBoolean) {
+                return true
+            }
+        }
+        return false
+    },
+	showHistory: function(){
+		var cueText = $(".subContent")[0].innerText
+		if(!cueText.includes(this.getCuesNL()))
+		$(".subContent")[0].innerText = this.getCuesNL()
+	}
+};
 
 function getRemoteDictionary() {
     try {
@@ -355,9 +394,15 @@ function addMouseenterListener() {
             var subPosition = $('.iblock')[0].getBoundingClientRect();
             // stop
             if (cY > subPosition.top && cY < subPosition.bottom && iTogglePlayState && !checkState()) {
-
+				//subtitlesHistory.showHistory()
+				
+				//showSubtitles(subtitlesHistory.getCuesNL(), false)
+				
+				//showSubtitles()
+				console.log("show")
                 iTogglePlayState = false;
                 $(iTogglePlayButtonName)[0].click();
+				checkDictionary(subtitlesHistory.getCuesNL(), false);
             }
 			
 			//test ()
@@ -421,8 +466,7 @@ function delayPause(seconds, translationsFound) {
 	}
 
 	$.ajax(settings).done(function (response) {
-	console.log("syn speak: " + response)	  
-speakFromUrl(response);
+	  speakFromUrl(response);
 	});
 	
 }
@@ -437,7 +481,7 @@ function speakFromUrl(request){
 		
 		audio.volume = volume;
 		audio.playbackRate = 0.9
-		console.log("speak from URL" + request)
+		
 		audio.play()
 		audio.onended = function() {
 			    if (checkState()) {
@@ -585,7 +629,8 @@ function removeFromDictionary(word) {
     dictionary.splice(index, 1);
     remoteDictionaryTransaction(word, "delete")
     //console.log("Remove from dictionary index: " + index);
-    checkDictionary(iCurrentSubs, false);
+    //checkDictionary(iCurrentSubs, false);
+	checkDictionary(subtitlesHistory.getCuesNL(), false);
     setStorageDictionary(dictionary);
 }
 
@@ -599,7 +644,9 @@ function addIntoDictionary(data, word) {
     //console.log(translation);
     dictionary.push(translation);
     remoteDictionaryTransaction(word, "add")
-    checkDictionary(iCurrentSubs, false);
+    //checkDictionary(iCurrentSubs, false);
+    checkDictionary(subtitlesHistory.getCuesNL(), false);
+	
     setStorageDictionary(dictionary);
 }
 
